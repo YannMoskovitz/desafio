@@ -4,11 +4,11 @@ package com.api.dev.apicontabil.controller;
 import com.api.dev.apicontabil.model.Client;
 import com.api.dev.apicontabil.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -29,15 +29,39 @@ public class ClientController {
 
     @GetMapping("client/search")
     Iterable<Client> findByQuery(@RequestParam(value = "nome",required = false) String nome,
-                                 @RequestParam(value = "email", required = false) String email) {
-        
-        if (nome != null && email != null)
-            return clientService.findByNomeAndEmail(nome, email);
+                                 @RequestParam(value = "cpfCnpj", required = false) String cpfCnpj,
+                                 @RequestParam(value = "cidade", required = false) String cidade,
+                                 @RequestParam(value = "uf", required = false) char uf) {
+        if (nome != null && cpfCnpj != null && cidade != null )
+            return clientService.findByNomeAndCpfCnpjAndCidadeAndUf(nome, cpfCnpj, cidade, uf);
         else if (nome != null)
             return clientService.findByNome(nome);
-        else if (email != null)
-            return  clientService.findByEmail(email);
+        else if (cpfCnpj != null)
+            return  clientService.findByCpfCnpj(cpfCnpj);
+        else if (cidade != null)
+            return clientService.findByCidade(cidade);
         else
             return clientService.findAll();
+        // fazer else if para uf e outras regras de negocio.
         }
+
+        @PostMapping("/cliente")
+        Client create(@Valid @RequestBody Client client) {
+            return clientService.save(client);
+        }
+
+        @PutMapping("/cliente")
+        ResponseEntity<Client> update(@Valid @RequestBody Client client) {
+            if (clientService.findById(client.getId()).isPresent())
+                return new ResponseEntity(clientService.save(client), HttpStatus.OK);
+            else
+                return new ResponseEntity(client, HttpStatus.BAD_REQUEST);
+        }
+
+
+
+    @DeleteMapping("/client/{id}")
+    void delete(@PathVariable Integer id) {
+        clientService.deleteById(id);
+    }
 }

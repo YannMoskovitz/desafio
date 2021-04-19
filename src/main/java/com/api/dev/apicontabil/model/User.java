@@ -1,21 +1,18 @@
 package com.api.dev.apicontabil.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.istack.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
+
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 @Entity
 @Table(name = "users")
+
 public class User {
 
     @Id
@@ -46,6 +43,7 @@ public class User {
     @Pattern(regexp = "[0-9]+")
     @Column(nullable = true, name ="telefone" ,length = 11) // deve poder ser null
     private String telefone;
+
 
     @Column(name ="status", length = 1)
     private char status;

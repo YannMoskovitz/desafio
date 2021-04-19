@@ -53,7 +53,6 @@ public class UserController {
     @PutMapping("/usuario")
     ResponseEntity<User> update(@Valid @RequestBody User user) {
 
-
         if (userService.findById(user.getId()).isPresent()) // userService.findByID(user.getId() tenta encontrar um id, ao acionar o .isPresente() faz uma verificação boolean retornando true caso o getId retorne algo)
             return new ResponseEntity(userService.save(user), HttpStatus.OK);
         else

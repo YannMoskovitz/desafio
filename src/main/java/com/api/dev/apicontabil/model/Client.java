@@ -4,12 +4,14 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "client")
 public class Client {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -18,9 +20,11 @@ public class Client {
     @Column(name = "dataCadastro", nullable = false)
     private LocalDateTime dataCadastro;
 
+    @NotBlank
     @Column(name = "nome",length = 30, nullable = false)
     private String nome;
 
+    @Pattern(regexp = "[0-9]+")
     @Column(name = "cpfCnpj",length = 14, nullable = false)
     private String cpfCnpj;
 
@@ -33,7 +37,8 @@ public class Client {
     @Column(name = "uf",length = 2, nullable = false)
     private char uf;
 
-    @Column(name = "cef",length = 8, nullable = false)
+    @Pattern(regexp = "[0-9]+[-]")
+    @Column(name = "cep",length = 8, nullable = false)
     private char cep;
 
     @Pattern(regexp = "[0-9]+")
