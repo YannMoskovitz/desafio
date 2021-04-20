@@ -12,7 +12,6 @@ public class LivroCaixa {
     private int id;
 
 
-
     private Date dataLancamento;
 
     @Column(name ="descricao" ,length =50 ,nullable = false)
@@ -26,7 +25,7 @@ public class LivroCaixa {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    private Client clients;
+    private Client client_id;
 
     public LivroCaixa() {
     }
@@ -71,11 +70,11 @@ public class LivroCaixa {
         this.valor = valor;
     }
 
-    public Client getClients() {
-        return clients;
+    public Client getClient_id() {
+        return client_id;
     }
 
-    public void setClients(Client clients) {
-        this.clients = clients;
+    public void setClient_id(Client client_id) {
+        this.client_id = client_id;
     }
 }

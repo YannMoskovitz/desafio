@@ -44,7 +44,6 @@ public class User {
     @Column(nullable = true, name ="telefone" ,length = 11) // deve poder ser null
     private String telefone;
 
-
     @Column(name ="status", length = 1)
     private char status;
 
