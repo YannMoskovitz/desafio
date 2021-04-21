@@ -31,8 +31,8 @@ public class ClientController {
     Iterable<Client> findByQuery(@RequestParam(value = "nome",required = false) String nome,
                                  @RequestParam(value = "cpfCnpj", required = false) String cpfCnpj,
                                  @RequestParam(value = "cidade", required = false) String cidade,
-                                 @RequestParam(value = "uf", required = false) char uf) {
-        if (nome != null && cpfCnpj != null && cidade != null )
+                                 @RequestParam(value = "uf", required = false) String uf) {
+        if (nome != null && cpfCnpj != null && cidade != null && uf != null )
             return clientService.findByNomeAndCpfCnpjAndCidadeAndUf(nome, cpfCnpj, cidade, uf);
         else if (nome != null)
             return clientService.findByNome(nome);
@@ -40,17 +40,19 @@ public class ClientController {
             return  clientService.findByCpfCnpj(cpfCnpj);
         else if (cidade != null)
             return clientService.findByCidade(cidade);
+        else if (uf != null)
+            return clientService.findByUf(uf);
         else
             return clientService.findAll();
         // fazer else if para uf e outras regras de negocio.
         }
 
-        @PostMapping("/cliente")
+        @PostMapping("/client")
         Client create(@Valid @RequestBody Client client) {
             return clientService.save(client);
         }
 
-        @PutMapping("/cliente")
+        @PutMapping("/client")
         ResponseEntity<Client> update(@Valid @RequestBody Client client) {
             if (clientService.findById(client.getId()).isPresent())
                 return new ResponseEntity(clientService.save(client), HttpStatus.OK);

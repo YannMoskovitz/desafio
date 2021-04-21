@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 @Entity
 @Table(name = "users")
@@ -22,7 +23,8 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "dataCadastro", nullable = false)
-    private LocalDateTime dataCadastro;
+    @Temporal(TemporalType.DATE)
+    private Date dataCadastro;
 
     @NotBlank
     @Column(name ="nome" ,length =30 ,nullable = false)
@@ -62,11 +64,11 @@ public class User {
         this.id = id;
     }
 
-    public LocalDateTime getDataCadastro() {
+    public Date getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
+    public void setDataCadastro(Date dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 
@@ -124,5 +126,15 @@ public class User {
 
     public void setPerfil(char perfil) {
         this.perfil = perfil;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        dataCadastro = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        dataCadastro  = new Date();
     }
 }

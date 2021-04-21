@@ -1,12 +1,15 @@
 package com.api.dev.apicontabil.model;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Table(name = "client")
@@ -18,7 +21,9 @@ public class Client {
 
     @CreationTimestamp
     @Column(name = "dataCadastro", nullable = false)
-    private LocalDateTime dataCadastro;
+    @Temporal(TemporalType.DATE)
+    private Date dataCadastro;
+
 
     @NotBlank
     @Column(name = "nome",length = 30, nullable = false)
@@ -35,11 +40,11 @@ public class Client {
     private String cidade;
 
     @Column(name = "uf",length = 2, nullable = false)
-    private char uf;
+    private String uf;
 
-    @Pattern(regexp = "[0-9]+[-]")
+
     @Column(name = "cep",length = 8, nullable = false)
-    private char cep;
+    private String cep;
 
     @Pattern(regexp = "[0-9]+")
     @Column(name = "telefone",length = 11, nullable = true)
@@ -60,11 +65,11 @@ public class Client {
         this.id = id;
     }
 
-    public LocalDateTime getDataCadastro() {
+    public Date getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
+    public void setDataCadastro(Date dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 
@@ -100,19 +105,23 @@ public class Client {
         this.cidade = cidade;
     }
 
-    public char getUf() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUf() {
         return uf;
     }
 
-    public void setUf(char uf) {
+    public void setUf(String uf) {
         this.uf = uf;
     }
 
-    public char getCep() {
+    public String getCep() {
         return cep;
     }
 
-    public void setCep(char cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 
@@ -130,5 +139,15 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        dataCadastro = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        dataCadastro  = new Date();
     }
 }
