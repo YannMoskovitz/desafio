@@ -22,7 +22,7 @@ public class Client {
     @Temporal(TemporalType.DATE)
     private Date dataCadastro;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "idClient")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
     private List<LivroCaixa> livroCaixas;
 
     @NotBlank

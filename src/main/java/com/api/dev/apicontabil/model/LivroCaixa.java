@@ -14,8 +14,8 @@ public class LivroCaixa {
     private int id;
 
     @ManyToOne(targetEntity = Client.class)
-    @JoinColumn(name = "idClient")
-    private Client idClient;
+    @JoinColumn(name = "client")
+    private Client client;
 
     @CreationTimestamp
     @Column(name = "dataLancamento", nullable = false)
@@ -40,12 +40,12 @@ public class LivroCaixa {
         this.id = id;
     }
 
-    public Client getIdClient() {
-        return idClient;
+    public Client getClient() {
+        return client;
     }
 
-    public void setIdClient(Client idClient) {
-        this.idClient = idClient;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Date getDataLancamento() {

@@ -27,7 +27,7 @@ public class LivroCaixaController {
 
     @GetMapping("/livro/search")
     Iterable<LivroCaixa> findByQuery(@RequestParam(value = "idClient", required = false) Integer idClient){
-        return livroCaixaService.findByIdClient(idClient);
+        return livroCaixaService.findByClient_Id(idClient);
     }
 
 
