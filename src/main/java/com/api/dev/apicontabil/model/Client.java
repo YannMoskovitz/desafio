@@ -1,15 +1,13 @@
 package com.api.dev.apicontabil.model;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "client")
@@ -24,6 +22,8 @@ public class Client {
     @Temporal(TemporalType.DATE)
     private Date dataCadastro;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "idClient")
+    private List<LivroCaixa> livroCaixas;
 
     @NotBlank
     @Column(name = "nome",length = 30, nullable = false)

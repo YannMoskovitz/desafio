@@ -3,14 +3,12 @@ package com.api.dev.apicontabil.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
 
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 @Entity
 @Table(name = "users")
 
@@ -30,9 +28,11 @@ public class User {
     @Column(name ="nome" ,length =30 ,nullable = false)
     private String nome;
 
+    @NotNull
     @Column(name ="login" ,length =15 ,nullable = false)
     private String login;
 
+    @NotNull
     @Column(name ="senha" ,length =10 ,nullable = false)
     private String senha;
 
@@ -47,10 +47,10 @@ public class User {
     private String telefone;
 
     @Column(name ="status", length = 1)
-    private char status;
+    private Status status;
 
     @Column(name ="perfil", length = 1)
-    private char perfil;
+    private Perfil perfil;
 
 
     public User() {
@@ -112,19 +112,19 @@ public class User {
         this.telefone = telefone;
     }
 
-    public char getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public char getPerfil() {
+    public Perfil getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(char perfil) {
+    public void setPerfil(Perfil perfil) {
         this.perfil = perfil;
     }
 

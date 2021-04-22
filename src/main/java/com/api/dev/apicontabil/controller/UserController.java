@@ -1,7 +1,9 @@
 package com.api.dev.apicontabil.controller;
 
 
+import com.api.dev.apicontabil.model.Status;
 import com.api.dev.apicontabil.model.User;
+import com.api.dev.apicontabil.services.AuthenticationService;
 import com.api.dev.apicontabil.services.UserService;
 import com.api.dev.apicontabil.util.FieldErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AuthenticationService authenticationService;
+
+    private String message;
+
     // -------------------------------------------- METODOS GET --------------------------------------------------- //
     @GetMapping("/usuario")
     Iterable<User> read() {
@@ -44,6 +52,18 @@ public class UserController {
         else
             return userService.findAll();
     }
+
+    @PostMapping("/login")
+    ResponseEntity login(@RequestBody User user) {
+        User aux = authenticationService.findByLoginAndSenha(user.getLogin(), user.getSenha());
+            if( aux != null && aux.getStatus() == Status.A)
+                return new ResponseEntity(message = "Usuario autenticado", HttpStatus.OK);
+            else if (aux != null && aux.getStatus() == Status.C)
+                return new ResponseEntity(message = "usuario inativo/cancelado", HttpStatus.OK);
+            else
+                return new ResponseEntity(message = "credenciais invalidas", HttpStatus.OK);
+    }
+
 
     @PostMapping("/usuario")
     User create(@Valid @RequestBody User user) {

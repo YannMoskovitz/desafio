@@ -1,6 +1,5 @@
 package com.api.dev.apicontabil.controller;
 
-import com.api.dev.apicontabil.model.Client;
 import com.api.dev.apicontabil.model.LivroCaixa;
 import com.api.dev.apicontabil.services.LivroCaixaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,13 @@ public class LivroCaixaController {
         return livroCaixaService.findById(id);
     }
 
-//    @GetMapping("/livro/search")
-//    Iterable<LivroCaixa> findByQuery(@RequestParam(value = "id_cliente", required = false) int id_client){
-//        return livroCaixaService.findById_client(id_client);
-//    }
+    @GetMapping("/livro/search")
+    Iterable<LivroCaixa> findByQuery(@RequestParam(value = "idClient", required = false) Integer idClient){
+        return livroCaixaService.findByIdClient(idClient);
+    }
+
+
+
 
     @PostMapping("/livro")
     LivroCaixa create(@RequestBody LivroCaixa livroCaixa) {
@@ -42,7 +44,7 @@ public class LivroCaixaController {
         if (livroCaixaService.findById(livroCaixa.getId()).isPresent())
             return new ResponseEntity(livroCaixaService.save(livroCaixa), HttpStatus.OK);
         else
-            return new ResponseEntity("O usuario o qual voce tentou atualizar não existe", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("O livro do qual voce tentou atualizar não existe", HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/livro/{id}")

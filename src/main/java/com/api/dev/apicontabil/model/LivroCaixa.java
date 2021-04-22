@@ -13,9 +13,9 @@ public class LivroCaixa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JoinColumn(name = "id_client")
     @ManyToOne(targetEntity = Client.class)
-    private Client id_client;
+    @JoinColumn(name = "idClient")
+    private Client idClient;
 
     @CreationTimestamp
     @Column(name = "dataLancamento", nullable = false)
@@ -40,12 +40,12 @@ public class LivroCaixa {
         this.id = id;
     }
 
-    public Client getId_client() {
-        return id_client;
+    public Client getIdClient() {
+        return idClient;
     }
 
-    public void setId_client(Client id_client) {
-        this.id_client = id_client;
+    public void setIdClient(Client idClient) {
+        this.idClient = idClient;
     }
 
     public Date getDataLancamento() {
