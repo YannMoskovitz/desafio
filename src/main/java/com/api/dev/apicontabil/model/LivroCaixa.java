@@ -14,7 +14,7 @@ public class LivroCaixa {
     private int id;
 
     @JoinColumn(name = "id_client")
-    @ManyToOne(optional = false)
+    @ManyToOne(targetEntity = Client.class)
     private Client id_client;
 
     @CreationTimestamp
