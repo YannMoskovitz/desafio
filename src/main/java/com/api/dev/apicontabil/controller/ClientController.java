@@ -46,24 +46,54 @@ public class ClientController {
             return clientService.findAll();
         // fazer else if para uf e outras regras de negocio.
         }
-
+//    @PostMapping("/usuario")
+//    ResponseEntity<User> create(@Valid @RequestBody User user) {
+//        if (userService.findByEmail(user.getEmail()) == null )
+//            return new ResponseEntity(userService.save(user), HttpStatus.OK);
+//        else if (userService.findByLogin(user.getLogin()) == null)
+//            return new ResponseEntity(userService.save(user), HttpStatus.OK);
+//        else
+//            return new ResponseEntity("Usuario com estas credenciais já existe", HttpStatus.OK);
         @PostMapping("/client")
-        Client create(@Valid @RequestBody Client client) {
-            return clientService.save(client);
+        ResponseEntity<Client> create(@Valid @RequestBody Client client) {
+
+            Client clientByEmail = clientService.findByEmail(client.getEmail());
+            Client clientByCpfCnpj = clientService.findByEmailAndCpfCnpj(client.getEmail(), client.getCpfCnpj());
+            Client clientByTelefone = clientService.findByTelefone(client.getTelefone());
+
+            if (clientByCpfCnpj == null && clientByTelefone == null && clientByEmail == null)
+                return new ResponseEntity(clientService.save(client), HttpStatus.OK);
+            else
+                return new ResponseEntity("Cliente com estas credenciais já existe", HttpStatus.BAD_REQUEST);
         }
 
         @PutMapping("/client")
         ResponseEntity<Client> update(@Valid @RequestBody Client client) {
-            if (clientService.findById(client.getId()).isPresent())
-                return new ResponseEntity(clientService.save(client), HttpStatus.OK);
+
+//            Client clientByEmail = clientService.findByEmail(client.getEmail());
+//            Client clientByCpfCnpj = clientService.findByEmailAndCpfCnpj(client.getEmail(), client.getCpfCnpj());
+//            Client clientByTelefone = clientService.findByTelefone(client.getTelefone());
+
+            if (clientService.findById(client.getId()).isPresent())  {
+//                if (clientService.findByEmail(client.getEmail()) == null
+//                        || clientService.findByCpfCnpj(client.getCpfCnpj()) == null
+//                        || clientService.findByTelefone(client.getTelefone()) == null)
+                    return new ResponseEntity(clientService.save(client), HttpStatus.OK);
+//                else
+//                    return new ResponseEntity("Cliente com estas credenciais já existe", HttpStatus.BAD_REQUEST);
+            }
             else
-                return new ResponseEntity(client, HttpStatus.BAD_REQUEST);
-        }
+                return new ResponseEntity("Cliente com este id não existe", HttpStatus.NOT_FOUND);
+    }
 
 
 
     @DeleteMapping("/client/{id}")
-    void delete(@PathVariable Integer id) {
-        clientService.deleteById(id);
+    ResponseEntity<Client> delete(@PathVariable Integer id) {
+        if (clientService.findById(id).isPresent()) {
+            clientService.deleteById(id);
+            return new ResponseEntity("Cliente deletado com sucesso", HttpStatus.OK);}
+        else
+            return new ResponseEntity("Cliente com este id não existe", HttpStatus.NOT_FOUND);
     }
 }

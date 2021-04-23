@@ -3,6 +3,8 @@ package com.api.dev.apicontabil.model;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -13,6 +15,7 @@ public class LivroCaixa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotNull(message = "Não se pode criar um livro para um cliente de id nulo")
     @ManyToOne(targetEntity = Client.class)
     @JoinColumn(name = "client")
     private Client client;
@@ -22,6 +25,7 @@ public class LivroCaixa {
     @Temporal(TemporalType.DATE)
     private Date dataLancamento;
 
+    @NotBlank(message = "Campo 'Descricao' não pode receber valor em branco ou 'nulo'")
     @Column(name = "descricao",length = 50, nullable = false)
     private String descricao;
 
@@ -29,8 +33,9 @@ public class LivroCaixa {
     @Column(name = "tipo", length = 1, nullable = false)
     private tipo tipo;
 
-    @Column(name = "valor", length = 13,nullable = false)
-    private String valor;
+
+    @Column(name = "valor", length = 13, scale = 2,nullable = false)
+    private Double valor;
 
     public int getId() {
         return id;
@@ -72,11 +77,21 @@ public class LivroCaixa {
         this.tipo = tipo;
     }
 
-    public String getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(String valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        dataLancamento = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        dataLancamento  = new Date();
     }
 }

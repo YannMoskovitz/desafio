@@ -3,9 +3,7 @@ package com.api.dev.apicontabil.model;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 
@@ -19,38 +17,47 @@ public class Client {
 
     @CreationTimestamp
     @Column(name = "dataCadastro", nullable = false)
-    @Temporal(TemporalType.DATE)
     private Date dataCadastro;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
     private List<LivroCaixa> livroCaixas;
 
-    @NotBlank
+    @NotBlank(message = "Campo 'nome' não pode receber valores 'branco' ou 'nulo'")
+    @Pattern(regexp = "[a-zA-Z]*", message = "Campo 'nome' só pode receber valores do tipo String")
     @Column(name = "nome",length = 30, nullable = false)
     private String nome;
 
-    @Pattern(regexp = "[0-9]+")
+    @Pattern(regexp = "[0-9]+", message = "Campo 'cpfCnpj' só pode receber numeros como valores do tipo String")
+    @Size(min = 11, max = 14, message = "cpf ou cnpj digitado é inválido")
     @Column(name = "cpfCnpj",length = 14, nullable = false)
     private String cpfCnpj;
 
+    @Pattern(regexp = "[a-zA-Z]*",message = "Campo 'logradouro' só pode receber letras")
     @Column(name = "logradouro",length = 50, nullable = false)
     private String logradouro;
 
+    @Pattern(regexp = "[a-zA-Z]*", message = "Campo 'cidade' só pode receber letras")
     @Column(name = "cidade",length = 40, nullable = false)
     private String cidade;
 
+    @Pattern(regexp = "[A-Z]*", message = "Campo 'UF' só pode receber letras")
+    @Size(min = 2, max = 2, message = "UF inválida")
     @Column(name = "uf",length = 2, nullable = false)
     private String uf;
 
-
+    @Pattern(regexp = "[0-9]*", message = "cep só pode aceita numeros como 'Strings'")
+    @Size(min = 8, max = 8, message = "Numero de cep inválido")
     @Column(name = "cep",length = 8, nullable = false)
     private String cep;
 
-    @Pattern(regexp = "[0-9]+")
+
+    @Pattern(regexp = "[0-9]+", message = "Campo 'telefone' só aceita numeros como 'String'")
+    @Size(min = 9, max = 11, message = "Numero de telefone invalido")
     @Column(name = "telefone",length = 11, nullable = true)
     private String telefone;
 
-    @Email
+    @NotNull(message = "e-mail não pode ser nulo")
+    @Email(message = "endereço de e-mail inválido")
     @Column(name = "email",length = 100, nullable = true)
     private String email;
 
@@ -142,12 +149,12 @@ public class Client {
     }
 
     @PrePersist
-    protected void onCreate() {
-        dataCadastro = new Date();
-    }
+    protected void onCreate() { dataCadastro = new Date();    }
 
     @PreUpdate
     protected void onUpdate() {
         dataCadastro  = new Date();
     }
+
+
 }

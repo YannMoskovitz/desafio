@@ -6,7 +6,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 @Entity
@@ -21,33 +20,34 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "dataCadastro", nullable = false)
-    @Temporal(TemporalType.DATE)
     private Date dataCadastro;
 
-    @NotBlank
-    @Column(name ="nome" ,length =30 ,nullable = false)
+    @Pattern(regexp = "[a-zA-Z]*",message = "Campo 'nome' só pode receber letras")
+    @Column(name ="nome" ,length = 30 ,nullable = false)
     private String nome;
 
-    @NotNull
-    @Column(name ="login" ,length =15 ,nullable = false)
+    @NotBlank(message = "Campo 'login' não pode ser nulo")
+    @Column(name ="login" ,length = 15 , unique = true ,nullable = false)
     private String login;
 
-    @NotNull
+    @NotBlank(message = "Campo 'senha' não pode ser nulo")
     @Column(name ="senha" ,length =10 ,nullable = false)
     private String senha;
 
-    @JsonProperty
-    @Email
+
+    @Email(message = "endereço de e-mail inválido")
     @Column(nullable = true, name ="email" ,length =100) //deve poder ser null
     private String email;
 
     @JsonProperty
-    @Pattern(regexp = "[0-9]+")
+    @Pattern(regexp = "[0-9]+", message = "Campo 'telefone' só aceita numeros como 'String'")
     @Column(nullable = true, name ="telefone" ,length = 11) // deve poder ser null
     private String telefone;
 
+
     @Column(name ="status", length = 1)
     private Status status;
+
 
     @Column(name ="perfil", length = 1)
     private Perfil perfil;

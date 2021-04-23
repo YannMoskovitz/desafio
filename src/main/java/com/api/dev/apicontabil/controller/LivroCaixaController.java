@@ -1,6 +1,7 @@
 package com.api.dev.apicontabil.controller;
 
 import com.api.dev.apicontabil.model.LivroCaixa;
+import com.api.dev.apicontabil.services.ClientService;
 import com.api.dev.apicontabil.services.LivroCaixaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,27 +16,28 @@ public class LivroCaixaController {
     @Autowired
     LivroCaixaService livroCaixaService;
 
+    @Autowired
+    ClientService clientService;
+
     @GetMapping("/livro")
     Iterable<LivroCaixa> read(){
         return livroCaixaService.findAll();
     }
 
     @GetMapping("/livro/{id}")
-    Optional<LivroCaixa> findById(@PathVariable Integer id) {
+    Optional<LivroCaixa> findById(@Valid @PathVariable Integer id) {
         return livroCaixaService.findById(id);
     }
 
     @GetMapping("/livro/search")
-    Iterable<LivroCaixa> findByQuery(@RequestParam(value = "idClient", required = false) Integer idClient){
+    Iterable<LivroCaixa> findByQuery(@Valid @RequestParam(value = "idClient", required = false) Integer idClient){
         return livroCaixaService.findByClient_Id(idClient);
     }
 
 
-
-
     @PostMapping("/livro")
-    LivroCaixa create(@RequestBody LivroCaixa livroCaixa) {
-        return livroCaixaService.save(livroCaixa);
+    ResponseEntity<LivroCaixa> create(@Valid @RequestBody LivroCaixa livroCaixa) {
+            return new ResponseEntity(livroCaixaService.save(livroCaixa), HttpStatus.CREATED);
     }
 
     @PutMapping("/livro")
@@ -48,7 +50,10 @@ public class LivroCaixaController {
     }
 
     @DeleteMapping("/livro/{id}")
-    void delete(@PathVariable Integer id) {
-        livroCaixaService.deleteById(id);
-    }
+            ResponseEntity<LivroCaixa> delete(@PathVariable Integer id) {
+                if (livroCaixaService.findById(id).isPresent()){
+                        livroCaixaService.deleteById(id);
+                    return new ResponseEntity("Livro caixa deletado com sucesso", HttpStatus.OK);}
+                else
+                    return new ResponseEntity("Usuario com este id não existe", HttpStatus.NOT_FOUND);}
 }

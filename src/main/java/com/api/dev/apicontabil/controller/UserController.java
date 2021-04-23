@@ -3,20 +3,14 @@ package com.api.dev.apicontabil.controller;
 
 import com.api.dev.apicontabil.model.Status;
 import com.api.dev.apicontabil.model.User;
-import com.api.dev.apicontabil.services.AuthenticationService;
 import com.api.dev.apicontabil.services.UserService;
-import com.api.dev.apicontabil.util.FieldErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -24,10 +18,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    AuthenticationService authenticationService;
-
-    private String message;
 
     // -------------------------------------------- METODOS GET --------------------------------------------------- //
     @GetMapping("/usuario")
@@ -48,47 +38,53 @@ public class UserController {
         else if (nome != null)
             return userService.findByNome(nome);
         else if (email != null)
+
             return  userService.findByEmail(email);
         else
             return userService.findAll();
     }
 
     @PostMapping("/login")
-    ResponseEntity login(@RequestBody User user) {
-        User aux = authenticationService.findByLoginAndSenha(user.getLogin(), user.getSenha());
-            if( aux != null && aux.getStatus() == Status.A)
-                return new ResponseEntity(message = "Usuario autenticado", HttpStatus.OK);
-            else if (aux != null && aux.getStatus() == Status.C)
-                return new ResponseEntity(message = "usuario inativo/cancelado", HttpStatus.OK);
+    ResponseEntity login(@Valid @RequestBody User user) {
+
+        User userInstance = userService.findByLoginAndSenha(user.getLogin(), user.getSenha());
+
+            if( userInstance != null && userInstance.getStatus() == Status.A)
+                return new ResponseEntity("Usuario autenticado", HttpStatus.OK);
+            else if (userInstance != null && userInstance.getStatus() == Status.C)
+                return new ResponseEntity("Usuario inativo/cancelado", HttpStatus.OK);
             else
-                return new ResponseEntity(message = "credenciais invalidas", HttpStatus.OK);
+                return new ResponseEntity("Login e/ou senha invalidos", HttpStatus.BAD_REQUEST);
     }
 
-
     @PostMapping("/usuario")
-    User create(@Valid @RequestBody User user) {
-        return userService.save(user);
+    ResponseEntity<User> create(@Valid @RequestBody User user) {
+
+           if (userService.findByEmail(user.getEmail()) == null || userService.findByLogin(user.getLogin()) == null)
+               return new ResponseEntity(userService.save(user), HttpStatus.OK);
+           else
+               return new ResponseEntity("Usuario com estas credenciais já existe", HttpStatus.OK);
     }
 
     @PutMapping("/usuario")
     ResponseEntity<User> update(@Valid @RequestBody User user) {
 
-        if (userService.findById(user.getId()).isPresent()) // userService.findByID(user.getId() tenta encontrar um id, ao acionar o .isPresente() faz uma verificação boolean retornando true caso o getId retorne algo)
-            return new ResponseEntity(userService.save(user), HttpStatus.OK);
+        if (userService.findById(user.getId()).isPresent()) {
+            if (userService.findByEmail(user.getEmail()) == null || userService.findByLogin(user.getLogin()) == null)
+                return new ResponseEntity(userService.save(user), HttpStatus.OK);
+            else
+                return new ResponseEntity("Credenciais e-mail e/ou login já estão em uso\n ou outras informações não puderam ser atualizadas" , HttpStatus.BAD_REQUEST);}
         else
-            return new ResponseEntity(user , HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Usuario com este id não existe" , HttpStatus.BAD_REQUEST);
     }
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-     List<FieldErrorMessage> exceptionHandler(MethodArgumentNotValidException e) {
-      List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-      List<FieldErrorMessage> fieldErrorMessages = fieldErrors.stream().map(fieldError -> new FieldErrorMessage(fieldError.getField(), fieldError.getDefaultMessage())).collect(Collectors.toList());
-        return fieldErrorMessages;
-    }
+
 
     @DeleteMapping("/usuario/{id}")
-    void delete(@PathVariable Integer id) {
-        userService.deleteById(id);
+    ResponseEntity<User> delete(@PathVariable Integer id) {
+        if (userService.findById(id).isPresent()) {
+            userService.deleteById(id);
+            return new ResponseEntity("Usuario deletado com sucesso", HttpStatus.OK);}
+        else
+            return new ResponseEntity("Usuario com este id não existe", HttpStatus.NOT_FOUND);
     }
-
 }
