@@ -38,23 +38,24 @@ public class UserController {
         else if (nome != null)
             return userService.findByNome(nome);
         else if (email != null)
-
             return  userService.findByEmail(email);
         else
             return userService.findAll();
     }
 
     @PostMapping("/login")
-    ResponseEntity login(@Valid @RequestBody User user) {
+    ResponseEntity login( @RequestBody User user) {
 
         User userInstance = userService.findByLoginAndSenha(user.getLogin(), user.getSenha());
 
-            if( userInstance != null && userInstance.getStatus() == Status.A)
-                return new ResponseEntity("Usuario autenticado", HttpStatus.OK);
-            else if (userInstance != null && userInstance.getStatus() == Status.C)
-                return new ResponseEntity("Usuario inativo/cancelado", HttpStatus.OK);
-            else
-                return new ResponseEntity("Login e/ou senha invalidos", HttpStatus.BAD_REQUEST);
+        if (userInstance == null)
+            return new ResponseEntity("Usuario e/ou senha incorretos", HttpStatus.BAD_REQUEST);
+        if (userInstance.getStatus() == null)
+            return new ResponseEntity("Usuario não possui status definido", HttpStatus.BAD_REQUEST);
+        if (userInstance.getStatus() == Status.A)
+            return new ResponseEntity("Usuario logado com sucesso", HttpStatus.OK);
+
+        return new ResponseEntity("Usuario está inativo/cancelado", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/usuario")
@@ -69,13 +70,20 @@ public class UserController {
     @PutMapping("/usuario")
     ResponseEntity<User> update(@Valid @RequestBody User user) {
 
-        if (userService.findById(user.getId()).isPresent()) {
-            if (userService.findByEmail(user.getEmail()) == null || userService.findByLogin(user.getLogin()) == null)
-                return new ResponseEntity(userService.save(user), HttpStatus.OK);
-            else
-                return new ResponseEntity("Credenciais e-mail e/ou login já estão em uso\n ou outras informações não puderam ser atualizadas" , HttpStatus.BAD_REQUEST);}
-        else
-            return new ResponseEntity("Usuario com este id não existe" , HttpStatus.BAD_REQUEST);
+        Iterable<User> UsuariosComEsteEmail = userService.findByEmail(user.getEmail());
+        Iterable<User> UsuariosComEsteLogin = userService.findByLogin(user.getLogin());
+
+        if (!userService.findById(user.getId()).isPresent())
+            return new ResponseEntity("Usuário com este ID não encontrado" , HttpStatus.NOT_FOUND);
+
+        if (UsuariosComEsteEmail.spliterator().getExactSizeIfKnown() > 0)
+            return new ResponseEntity("Este e-mail já esta em uso" , HttpStatus.BAD_REQUEST);
+
+        if (UsuariosComEsteLogin.spliterator().getExactSizeIfKnown() > 0)
+            return new ResponseEntity("Este Login já esta em uso" , HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity(userService.save(user), HttpStatus.OK);
+
     }
 
 

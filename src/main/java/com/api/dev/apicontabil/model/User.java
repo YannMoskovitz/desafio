@@ -22,6 +22,7 @@ public class User {
     @Column(name = "dataCadastro", nullable = false)
     private Date dataCadastro;
 
+    @NotBlank(message = "Campo 'nome' não pode ser nulo/em branco")
     @Pattern(regexp = "[a-zA-Z]*",message = "Campo 'nome' só pode receber letras")
     @Column(name ="nome" ,length = 30 ,nullable = false)
     private String nome;
@@ -36,7 +37,7 @@ public class User {
 
 
     @Email(message = "endereço de e-mail inválido")
-    @Column(nullable = true, name ="email" ,length =100) //deve poder ser null
+    @Column(nullable = true, name ="email" ,length =100, unique = true) //deve poder ser null
     private String email;
 
     @JsonProperty
@@ -44,12 +45,12 @@ public class User {
     @Column(nullable = true, name ="telefone" ,length = 11) // deve poder ser null
     private String telefone;
 
-
-    @Column(name ="status", length = 1)
+    @Enumerated(EnumType.STRING)
+    @Column(name ="status", length = 1, nullable = false)
     private Status status;
 
-
-    @Column(name ="perfil", length = 1)
+    @Enumerated(EnumType.STRING)
+    @Column(name ="perfil", length = 1, nullable = false)
     private Perfil perfil;
 
 

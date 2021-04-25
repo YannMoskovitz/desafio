@@ -23,7 +23,7 @@ public class Client {
     private List<LivroCaixa> livroCaixas;
 
     @NotBlank(message = "Campo 'nome' não pode receber valores 'branco' ou 'nulo'")
-    @Pattern(regexp = "[a-zA-Z]*", message = "Campo 'nome' só pode receber valores do tipo String")
+    @Pattern(regexp = "[a-zA-Z ]*", message = "Campo 'nome' só pode receber valores do tipo String")
     @Column(name = "nome",length = 30, nullable = false)
     private String nome;
 
@@ -36,7 +36,7 @@ public class Client {
     @Column(name = "logradouro",length = 50, nullable = false)
     private String logradouro;
 
-    @Pattern(regexp = "[a-zA-Z]*", message = "Campo 'cidade' só pode receber letras")
+    @Pattern(regexp = "[a-zA-Z ]*", message = "Campo 'cidade' só pode receber letras")
     @Column(name = "cidade",length = 40, nullable = false)
     private String cidade;
 

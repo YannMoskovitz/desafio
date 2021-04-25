@@ -44,46 +44,41 @@ public class ClientController {
             return clientService.findByUf(uf);
         else
             return clientService.findAll();
-        // fazer else if para uf e outras regras de negocio.
         }
-//    @PostMapping("/usuario")
-//    ResponseEntity<User> create(@Valid @RequestBody User user) {
-//        if (userService.findByEmail(user.getEmail()) == null )
-//            return new ResponseEntity(userService.save(user), HttpStatus.OK);
-//        else if (userService.findByLogin(user.getLogin()) == null)
-//            return new ResponseEntity(userService.save(user), HttpStatus.OK);
-//        else
-//            return new ResponseEntity("Usuario com estas credenciais já existe", HttpStatus.OK);
+
         @PostMapping("/client")
         ResponseEntity<Client> create(@Valid @RequestBody Client client) {
 
-            Client clientByEmail = clientService.findByEmail(client.getEmail());
-            Client clientByCpfCnpj = clientService.findByEmailAndCpfCnpj(client.getEmail(), client.getCpfCnpj());
-            Client clientByTelefone = clientService.findByTelefone(client.getTelefone());
+        Iterable<Client> clientsComEsteEmail = clientService.findByEmail(client.getEmail());
+        Iterable<Client> clientsComEsteTelefone = clientService.findByTelefone(client.getTelefone());
+        Iterable<Client> clientsComEsteCpfcnpj = clientService.findByCpfCnpj(client.getCpfCnpj());
 
-            if (clientByCpfCnpj == null && clientByTelefone == null && clientByEmail == null)
-                return new ResponseEntity(clientService.save(client), HttpStatus.OK);
-            else
-                return new ResponseEntity("Cliente com estas credenciais já existe", HttpStatus.BAD_REQUEST);
+            if (clientsComEsteCpfcnpj.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este Cpf ou cnpj", HttpStatus.BAD_REQUEST);
+            if (clientsComEsteEmail.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este endereço de email", HttpStatus.BAD_REQUEST);
+            if (clientsComEsteTelefone.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este numero de telefone", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(clientService.save(client), HttpStatus.OK);
         }
 
         @PutMapping("/client")
         ResponseEntity<Client> update(@Valid @RequestBody Client client) {
 
-//            Client clientByEmail = clientService.findByEmail(client.getEmail());
-//            Client clientByCpfCnpj = clientService.findByEmailAndCpfCnpj(client.getEmail(), client.getCpfCnpj());
-//            Client clientByTelefone = clientService.findByTelefone(client.getTelefone());
+            Iterable<Client> clientsComEsteEmail = clientService.findByEmail(client.getEmail());
+            Iterable<Client> clientsComEsteTelefone = clientService.findByTelefone(client.getTelefone());
+            Iterable<Client> clientsComEsteCpfcnpj = clientService.findByCpfCnpj(client.getCpfCnpj());
 
-            if (clientService.findById(client.getId()).isPresent())  {
-//                if (clientService.findByEmail(client.getEmail()) == null
-//                        || clientService.findByCpfCnpj(client.getCpfCnpj()) == null
-//                        || clientService.findByTelefone(client.getTelefone()) == null)
-                    return new ResponseEntity(clientService.save(client), HttpStatus.OK);
-//                else
-//                    return new ResponseEntity("Cliente com estas credenciais já existe", HttpStatus.BAD_REQUEST);
-            }
-            else
-                return new ResponseEntity("Cliente com este id não existe", HttpStatus.NOT_FOUND);
+            if (!clientService.findById(client.getId()).isPresent())
+                return new ResponseEntity("Usuario com este ID não encontrado", HttpStatus.NOT_FOUND);
+            if (clientsComEsteCpfcnpj.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este Cpf ou cnpj", HttpStatus.BAD_REQUEST);
+            if (clientsComEsteEmail.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este endereço de email", HttpStatus.BAD_REQUEST);
+            if (clientsComEsteTelefone.spliterator().getExactSizeIfKnown() > 0)
+                return new ResponseEntity("Já existe um cliente com este numero de telefone", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(clientService.save(client), HttpStatus.OK);
+
     }
 
 

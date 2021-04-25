@@ -2,6 +2,7 @@ package com.api.dev.apicontabil.model;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ public class LivroCaixa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
 
     @NotNull(message = "Não se pode criar um livro para um cliente de id nulo")
     @ManyToOne(targetEntity = Client.class)
